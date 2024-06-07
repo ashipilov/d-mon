@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Iterable
 import numpy as np
 import sounddevice as sd
 from cancellation import cancellation
@@ -15,9 +16,10 @@ def calculate_db(audio_data):
     return db
 
 
-def loop():
+def read() -> Iterable[float]:
     while not cancellation.is_requested:
         audio_data = sd.rec(int(duration * fs), samplerate=fs, channels=1, dtype='float64')
         sd.wait()
         db = calculate_db(audio_data)
         print(datetime.now(), db)
+        yield db
